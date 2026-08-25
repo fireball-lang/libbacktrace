@@ -36,8 +36,14 @@ jobs:
             make
             mingw-w64-x86_64-gcc
 
-      - name: Build
-        shell: ${{ matrix.shell }}
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: msys2 {0}
+        run: bash build.sh
+
+      - name: Build (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
         run: bash build.sh
 
       - name: Upload Artifact
