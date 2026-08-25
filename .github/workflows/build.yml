@@ -12,10 +12,13 @@ jobs:
         include:
           - runs_on: "windows-latest"
             target: "windows-amd64"
+            shell: "msys2 {0}"
           - runs_on: "ubuntu-latest"
             target: "ubuntu-amd64"
+            shell: "bash"
           - runs_on: "macos-latest"
             target: "macos-aarch64"
+            shell: "bash"
 
     runs-on: ${{ matrix.runs_on }}
 
@@ -25,20 +28,17 @@ jobs:
 
       - name: Setup Windows MinGW Environment
         if: runner.os == 'Windows'
-        uses: egor-tensin/setup-mingw@v3
+        uses: msys2/setup-msys2@v2
         with:
-          platform: x64
+          msystem: MINGW64
+          update: true
+          install: >-
+            make
+            mingw-w64-x86_64-gcc
 
       - name: Build
-        shell: bash
-        run: |
-            if [ "$RUNNER_OS" == "Windows" ]; then
-              export CC=gcc
-              export CXX=g++
-              export CONFIG_SHELL=/bin/sh
-              export MAKE="make SHELL=/bin/sh"
-            fi
-            bash build.sh
+        shell: ${{ matrix.shell }}
+        run: bash build.sh
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
