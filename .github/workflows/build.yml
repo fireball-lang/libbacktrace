@@ -35,6 +35,8 @@ jobs:
             if [ "$RUNNER_OS" == "Windows" ]; then
               export CC=gcc
               export CXX=g++
+              export CONFIG_SHELL=/bin/sh
+              export MAKE="make SHELL=/bin/sh"
             fi
             bash build.sh
 
